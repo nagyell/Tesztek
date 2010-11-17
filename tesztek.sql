@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Hoszt: localhost
--- Létrehozás ideje: 2010. nov. 17. 19:17
+-- Létrehozás ideje: 2010. nov. 17. 22:29
 -- Szerver verzió: 5.1.41
 -- PHP verzió: 5.3.1
 
@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS `csoportok` (
 
 INSERT INTO `csoportok` (`csoport`, `leiras`) VALUES
 ('adminok', 'Rendszergazdák.'),
-('proba', 'Csak az adatbázis teszteléséhez.');
+('proba', 'Csak az adatbázis teszteléséhez.'),
+('vendegek', 'Vendégek.');
 
 -- --------------------------------------------------------
 
@@ -61,8 +62,33 @@ CREATE TABLE IF NOT EXISTS `felhasznalok` (
 --
 
 INSERT INTO `felhasznalok` (`nev`, `jelszo`, `vnev`, `knev`, `csoport`, `jogok`, `belepett`) VALUES
-('', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', 'Rongy', 'Elek', 'proba', 0, 0),
+('', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', 'Rongy', 'Elek', 'proba', 0, 1),
 ('admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Rendszer', 'Gazda', 'adminok', 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet: `kerdesek`
+--
+
+CREATE TABLE IF NOT EXISTS `kerdesek` (
+  `tesztkod` int(11) NOT NULL,
+  `kerdesszam` int(11) NOT NULL,
+  `kerdes` text NOT NULL,
+  `valasz_a` text NOT NULL,
+  `helyes_a` tinyint(1) NOT NULL,
+  `valasz_b` text NOT NULL,
+  `helyes_b` tinyint(1) NOT NULL,
+  `valasz_c` text NOT NULL,
+  `helyes_c` tinyint(1) NOT NULL,
+  `valasz_d` text NOT NULL,
+  `helyes_d` tinyint(1) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- A tábla adatainak kiíratása `kerdesek`
+--
+
 
 -- --------------------------------------------------------
 
