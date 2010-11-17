@@ -112,16 +112,24 @@ function osszesteszt() {
 	if (!mysql_select_db($db, $con)) {
 		echo "Nemletezo adatbazis!<br/>\n";
 	}
-	$res = mysql_query("select tesztnev from teszt;");
+	$res = mysql_query("select tesztkod,tesztnev from teszt;");
  	if (mysql_num_rows($res) == 0) {
 		mysql_close($con);
 		return false;
 	}
-	print "Az összes teszt:\n";
+	print "Az összes teszt:<br>\n";
+	?>
+	<form name="tesztnevellenorzes" action="index.php" method="post">
+	<?php
 	while ($sor=mysql_fetch_array($res))
 		{
-			print $sor["tesztnev"]."<br />\n";
+		print "<input type=\"radio\" name=\"teszt_szerkeszt\" value=\"".$sor["tesztkod"]."\"/>".$sor["tesztnev"]."<br />\n";
 		}
+	?>
+	<input type="hidden" name="menupont" value="teszt-szerkeszt"/>
+	<input type="submit" value="Szerkeszt">
+	</form>
+	<?php
 	mysql_close($con);
 }
 

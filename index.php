@@ -16,6 +16,9 @@ switch ($_POST["menupont"]) {
 	case "ki":
 		kilep($_SESSION["nev"]);
 	break;
+	case "teszt-szerkeszt":
+	// print($_POST["teszt_szerkeszt"]);
+	break;
 }
 
 ?>
@@ -103,6 +106,9 @@ switch ($_POST["menupont"]) {
 					break;
 					case "osszesteszt":
 						osszesteszt();
+					break;
+					case "teszt-szerkeszt":
+						echo "teszt-szerkeszt";
 					break;
 				}
 
