@@ -1,0 +1,383 @@
+﻿body {
+	background-color: #fed7b0;
+	background: url(../img/minta.jpg);
+}
+
+
+#main {
+	float: center;
+	width: 810px;
+	min-width: 810px;
+	height: 100%;
+	margin: 0px auto;
+	padding: 0px;
+	text-align: center;
+}
+
+#header{
+	width: 100%;
+	min-width: 810px;
+	height: 125px;
+	margin: 0px;
+	margin: 0px auto 10px auto;
+	padding: 0px;
+	text-align: center;
+}
+
+#logo {
+	width: 810 px;
+	min-width: 800px;
+	height: 125px;
+	margin: 0px;
+	text-align: center;
+}
+
+#logo1 {
+	float: left;
+	width: 300px;
+	height: 125px;
+	padding: 0px 0px 0px 0px;
+}
+
+#logo2 {
+	float: right;
+	width: 500px;
+	height: 125px;
+	padding: 0px 0px 0px 0px;
+}
+
+
+#title {
+	width: 810 px;
+	min-width: 800px;
+	margin: 0px;
+}
+
+#title1 {
+	float: left;
+	width: 544px;
+	height: 30px;
+	margin: 0px auto;
+	padding: 0px;
+	text-align: left;
+	font-family: "Times New Roman", Times, serif;
+	font-style: normal;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+#title2 {
+	float: right;
+	width: 256px;
+	height: 30px;
+	margin: 0px auto;
+	padding: 0px;
+	text-align: right;
+	font-family: "Times New Roman", Times, serif;
+	font-style: normal;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+
+
+#content {
+	width: 100%;
+	min-width: 810px;
+	margin: 0px auto 10px auto;
+	padding: 0px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 20px;
+	font-weight: bold;
+	font-family: "Times New Roman", Times, serif;
+	color: blue;
+}
+
+#content_menu {
+	float: left;
+	width: 120px;
+	padding: 0px;
+}
+
+#content_content {
+	float: right;
+	width: 690px;
+	padding: 0px;
+	overflow: auto;
+	color: blue;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 14px;
+}
+
+#content_content a {
+	text-decoration: none;
+	font-family: Verdana, serif;
+	font-weight: bold;
+	font-style: italic;
+	color: blue; 
+}
+
+#content_content a:hover {
+	color: darkblue; 
+}
+
+#settings_left {
+	float: left;
+	width: 50%;
+}
+
+#settings_right {
+	float: right;
+	width: 50%;
+}
+
+
+#footer {
+	width: 100%;
+	min-width: 810px;
+	height: auto;
+	margin: 0px auto 10px auto;
+	padding: 0px;
+	text-align: center;
+	text-decoration: none;
+	color: red;
+	font-size: 10px;
+	padding: 5px;
+	
+}
+
+#footer a  {
+	text-decoration: none;
+	font-size: 10px;
+	font-weight: bold;
+	font-family: Courier, serif;
+	color: red; 
+}
+
+#footer a:hover {
+	color: darkblue; 
+}
+
+
+
+.uppermenu {
+	display: block;
+	height: 20px;
+	width: 120px;
+	text-align: center;
+	font-size: 15px;
+	font-weight: bold;
+	font-family: Verdana, serif;
+	font-style: normal;
+	color: black;/*#2051a9;*/
+	background: #6495ED;
+	text-decoration: none;
+	padding: 1px;
+}
+
+.uppermenu:hover	{
+	color: lightblue;/*#87CEEB;*/
+	background: #1058d0;/*#FF7F50;*/
+}
+
+.menu {
+	display: block;
+	height: 20px;
+	width: 120px;
+	text-align: right;
+	font-size: 15px;
+	font-weight: bold;
+	font-family: Verdana, serif;
+	color: black;/*#2051a9;*/
+	background: #6495ED;
+	text-decoration: none;
+	padding: 1px;
+}
+
+.menu:hover	{
+	color: lightblue;/*#87CEEB;*/
+	background: #1058d0;/*#FF7F50;*/
+}
+
+
+.kepekmenu {
+	display: block;
+	height: 40px;
+	width: 120px;
+	text-align: center;
+	font-size: 15px;
+	font-weight: bold;
+	font-family: Verdana, serif;
+	font-style: normal;
+	color: black;/*#2051a9;*/
+	background: #6495ED;
+	text-decoration: none;
+	padding: 1px;
+}
+
+.kepekmenu:hover	{
+	color: lightblue;/*#87CEEB;*/
+	background: #1058d0;/*#FF7F50;*/
+}
+
+
+.button {
+	height: 20px;
+	text-align: center;
+	font-size: 15px;
+	font-weight: bold;
+	font-family: Verdana, serif;
+	font-style: normal;
+	color: black;/*#2051a9;*/
+	background: #6495ED;
+	text-decoration: none;
+	padding: 1px;
+}
+
+.button:hover	{
+	color: lightblue;/*#87CEEB;*/
+	background: #1058d0;/*#FF7F50;*/
+}
+
+
+.simple_table {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left; 
+	color: inherit;
+	font-size: inherit;
+	font-style: inherit;
+	font-weight: inherit;
+}
+
+.simple_right_table {
+	margin-left: auto;
+	margin-right: 0px;
+	text-align: left; 
+	color: inherit;
+	font-size: inherit;
+	font-style: inherit;
+	font-weight: inherit;
+}
+
+.simple_left_table {
+	margin-left: 0px;
+	margin-right: auto;
+	text-align: left; 
+	color: inherit;
+	font-size: inherit;
+	font-style: inherit;
+	font-weight: inherit;
+}
+
+.simple_center_table {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left; 
+	color: inherit;
+	font-size: inherit;
+	font-style: inherit;
+	font-weight: inherit;
+}
+
+.simple_top_table {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left; 
+	color: inherit;
+	font-size: inherit;
+	font-style: inherit;
+	font-weight: inherit;
+}
+
+.simple_top_table  td {
+	vertical-align: top;
+}
+
+.users_table {
+	width: 96%;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+	color: inherit;
+	font-size: inherit;
+	font-style: inherit;
+	font-weight: inherit;
+	border: 2px double gray;
+}
+
+.users_table th {
+	text-align: center;
+	font-family: Verdana, serif;
+	color: #444444;/*#2051a9;*/
+	border: 1px solid gray;
+}
+ 
+.users_table td {
+	border: 1px solid gray;
+}
+
+.links_table {
+	width: 96%;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+	color: inherit;
+	font-size: inherit;
+	font-style: inherit;
+	font-weight: inherit;
+	border: 2px double gray;
+}
+
+.links_table th {
+	text-align: center;
+	vertical-align: top;
+	font-family: Verdana, serif;
+	color: #444444;/*#2051a9;*/
+	border: 1px solid gray;
+}
+ 
+.links_table td {
+	border: 1px solid gray;
+}
+
+.forum_table {
+	width: 96%;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+	color: inherit;
+	font-size: inherit;
+	font-style: inherit;
+	font-weight: inherit;
+	border: 2px double gray;
+}
+
+.forum_table th {
+	text-align: center;
+	font-family: Verdana, serif;
+	color: #444444;/*#2051a9;*/
+	border: 1px solid gray;
+}
+ 
+.forum_table td {
+	vertical-align: top;
+	border: 1px solid gray;
+}
+
+
+.topik_link {
+	height: 20px;
+	text-align: left;
+	font-size: 15px;
+	font-weight: bold;
+	font-family: Verdana, serif;
+	color: black;/*#2051a9;*/
+	text-decoration: none;
+	padding: 1px;
+}
+
+.topik_link:hover	{
+	color: lightblue;/*#87CEEB;*/
+}
