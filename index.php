@@ -17,7 +17,11 @@ switch ($_POST["menupont"]) {
 		kilep($_SESSION["nev"]);
 	break;
 	case "teszt-szerkeszt":
-	// print($_POST["teszt_szerkeszt"]);
+	// print($_POST["kivalasztott_teszt"]);
+	break;
+	case "csoport-megosztas":
+	//	print($_POST["kivalasztott_teszt"]);
+	//	print($_POST["kivalasztott_csoport"]);
 	break;
 }
 

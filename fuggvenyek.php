@@ -117,17 +117,38 @@ function osszesteszt() {
 		mysql_close($con);
 		return false;
 	}
+	$csoportok = mysql_query("select csoport from csoportok;");
+ 	if (mysql_num_rows($csoportok) == 0) {
+		mysql_close($con);
+		return false;
+	}
 	print "Az összes teszt:<br>\n";
 	?>
 	<form name="tesztnevellenorzes" action="index.php" method="post">
 	<?php
+	$sor=mysql_fetch_array($res);
+	print "<input type=\"radio\" name=\"kivalasztott_teszt\" value=\"".$sor["tesztkod"]."\"/ checked>".$sor["tesztnev"]."<br />\n";
 	while ($sor=mysql_fetch_array($res))
 		{
-		print "<input type=\"radio\" name=\"teszt_szerkeszt\" value=\"".$sor["tesztkod"]."\"/>".$sor["tesztnev"]."<br />\n";
+		print "<input type=\"radio\" name=\"kivalasztott_teszt\" value=\"".$sor["tesztkod"]."\"/>".$sor["tesztnev"]."<br />\n";
 		}
 	?>
 	<input type="hidden" name="menupont" value="teszt-szerkeszt"/>
 	<input type="submit" value="Szerkeszt">
+	<br />
+	<br />
+	<select size="1" name="kivalasztott_csoport" >
+		<?php 
+			$csoport=mysql_fetch_array($csoportok);
+			print "<option selected value=\"".$csoport["csoport"]."\">".$csoport["csoport"]."</option>";
+			while ($csoport=mysql_fetch_array($csoportok))
+			{
+			print "<option value=\"".$csoport["csoport"]."\">".$csoport["csoport"]."</option>";
+			}
+		?>
+	</selected>
+	<input type="hidden" name="menupont" value="csoport-megosztas"/>
+	<input type="submit" value="Megoszt">
 	</form>
 	<?php
 	mysql_close($con);
