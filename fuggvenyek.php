@@ -133,4 +133,35 @@ function osszesteszt() {
 	mysql_close($con);
 }
 
+/*
+ * Szerkeszt egy tesztet
+ */
+function teszt_szerkeszt() {
+	$tesztId = $_POST["teszt_szerkeszt"];
+	$tesztKerdes = $_POST["teszt_kerdes"];
+	if(!isset($tesztKerdes)){
+		$tesztKerdes=0;
+	}
+	print $tesztId . "kerdes:". $tesztKerdes;
+?>
+		<form name="tesztszerkeszt" action="index.php" method="post">
+		<h2>Kérdés:</h2>
+		<textarea rows="10" cols="60"></textarea>
+		<h2>Válaszok:</h2>
+		<input type="checkbox" name="helyes1" value=""/>
+		<input type="text" name="kerdes1" value="" size="60"/><br/>
+		<input type="checkbox" name="helyes2" value=""/>
+		<input type="text" name="kerdes2" value="" size="60"/><br/>
+		<input type="checkbox" name="helyes3" value=""/>
+		<input type="text" name="kerdes3" value="" size="60"/><br/>
+		<input type="checkbox" name="helyes4" value=""/>
+		<input type="text" name="kerdes4" value="" size="60"/><br/>
+		
+		<input type="hidden" name="menupont" value="tesztSzerkeszt"/>
+		<input type="hidden" name="tesztKerdes" value=<?php echo "\"".$tesztKerdes."\"" ?>/>
+		<input type="button" value="Következo">
+		</form>
+<?php
+	
+}
 ?>

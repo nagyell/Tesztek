@@ -108,7 +108,7 @@ switch ($_POST["menupont"]) {
 						osszesteszt();
 					break;
 					case "teszt-szerkeszt":
-						echo "teszt-szerkeszt";
+						teszt_szerkeszt();
 					break;
 				}
 
