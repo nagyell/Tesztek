@@ -125,6 +125,7 @@ function osszesteszt() {
 	print "Az összes teszt:<br>\n";
 	?>
 	<form name="tesztnevellenorzes" action="index.php" method="post">
+	<input type="hidden" name="menupont" value="teszt-muvelet"/>
 	<?php
 	$sor=mysql_fetch_array($res);
 	print "<input type=\"radio\" name=\"kivalasztott_teszt\" value=\"".$sor["tesztkod"]."\"/ checked>".$sor["tesztnev"]."<br />\n";
@@ -133,8 +134,7 @@ function osszesteszt() {
 		print "<input type=\"radio\" name=\"kivalasztott_teszt\" value=\"".$sor["tesztkod"]."\"/>".$sor["tesztnev"]."<br />\n";
 		}
 	?>
-	<input type="hidden" name="menupont" value="teszt-szerkeszt"/>
-	<input type="submit" value="Szerkeszt">
+	<input type="submit" name="teszt-szerkeszt" value="Szerkeszt">
 	<br />
 	<br />
 	<select size="1" name="kivalasztott_csoport" >
@@ -147,8 +147,7 @@ function osszesteszt() {
 			}
 		?>
 	</selected>
-	<input type="hidden" name="menupont" value="csoport-megosztas"/>
-	<input type="submit" value="Megoszt">
+	<input type="submit" name="csoport-megosztas" value="Megoszt">
 	</form>
 	<?php
 	mysql_close($con);
@@ -158,7 +157,7 @@ function osszesteszt() {
  * Szerkeszt egy tesztet
  */
 function teszt_szerkeszt() {
-	$tesztId = $_POST["teszt_szerkeszt"];
+	$tesztId = $_POST["kivalasztott_teszt"];
 	$tesztKerdes = $_POST["teszt_kerdes"];
 	if(!isset($tesztKerdes)){
 		$tesztKerdes=0;

@@ -4,6 +4,13 @@ session_start();
 include "connect.php";
 include "fuggvenyek.php";
 
+if($_POST["menupont"]=="teszt-muvelet"){
+	if(isset($_POST["teszt-szerkeszt"]))
+		$_POST["menupont"]="teszt-szerkeszt";
+	if(isset($_POST["csoport-megosztas"]))
+		$_POST["menupont"]="csoport-megosztas";
+}
+
 switch ($_POST["menupont"]) {
 	case "be_adatok":
 		if (belep($_POST["nev"], $_POST["jelszo"])) {
@@ -17,7 +24,7 @@ switch ($_POST["menupont"]) {
 		kilep($_SESSION["nev"]);
 	break;
 	case "teszt-szerkeszt":
-	// print($_POST["kivalasztott_teszt"]);
+	//	print($_POST["kivalasztott_teszt"]);
 	break;
 	case "csoport-megosztas":
 	//	print($_POST["kivalasztott_teszt"]);
