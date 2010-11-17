@@ -15,6 +15,7 @@ function regisztral($nev, $jelszo) {
 	return true;
 }
 
+//ez a belepo fuggveny
 function belep($nev, $jelszo) {
 	global $host, $user, $pass, $db;
 	$con = mysql_connect($host, $user, $pass);
