@@ -120,7 +120,7 @@ function osszesteszt() {
 	print "Az összes teszt:\n";
 	while ($sor=mysql_fetch_array($res))
 		{
-			print $sor["tesztnev"]."\n";
+			print $sor["tesztnev"].<br>"\n";
 		}
 	mysql_close($con);
 }
