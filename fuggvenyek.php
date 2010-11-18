@@ -23,7 +23,7 @@ function belep($nev, $jelszo) {
 		echo "Nemletezo adatbazis!<br/>\n";
 	}
 	$res = mysql_query("select nev, jogok, vnev, knev, csoport from felhasznalok where nev='" . $nev . "' and jelszo='" . sha1($jelszo) . "';");
- 	if (mysql_num_rows($res) == 0) {
+ 	if (mysql_num_rows($res) != 1) {
 		mysql_close($con);
 		return false;
 	}
@@ -154,34 +154,183 @@ function osszesteszt() {
 }
 
 /*
+ * Megkeresi egy kerdes rakovetkezojet.
+ * Ha a $strict==true, akkor a szigoruan nagyobb kerdes szamat adja vissza, ha
+ * false, akkor visszaadja az $kerdes erteket ha letezik
+ * Ha nincs eredmeny, akkor a $kerdes erteket teriti vissza
+ */
+function kovetkezo_kerdes($tesztkod, $kerdes, $strict) {
+	global $host, $user, $pass, $db;
+	$con = mysql_connect($host, $user, $pass);
+	if (!mysql_select_db($db, $con)) {
+		echo "Nemletezo adatbazis!<br/>\n";
+	}
+	$sql = "SELECT tesztkod, kerdesszam FROM kerdesek WHERE tesztkod=".$tesztkod." AND ";
+	
+	if($strict){
+		$sql.="kerdesszam > ".$kerdes;
+	} else {
+		$sql.="kerdesszam >= ".$kerdes;
+	}
+	$sql .= " ORDER BY kerdesszam";
+	// print $sql;
+	$res = mysql_query($sql);
+ 	if (mysql_num_rows($res) == 0) {
+		return $kerdes;
+	}
+	
+	$sor=mysql_fetch_array($res);
+	$kerdesszam = $sor["kerdesszam"];
+	mysql_close($con);
+	return $kerdesszam;
+}
+
+/*
+ * Megkeresi egy kerdes elotti kerdest.
+ * Ha a $strict==true, akkor a szigoruan nagyobb kerdes szamat adja vissza, ha
+ * false, akkor visszaadja az $kerdes erteket ha letezik
+ * Ha nincs eredmeny, akkor a $kerdes erteket teriti vissza
+ */
+function elozo_kerdes($tesztkod, $kerdes, $strict) {
+	global $host, $user, $pass, $db;
+	$con = mysql_connect($host, $user, $pass);
+	if (!mysql_select_db($db, $con)) {
+		echo "Nemletezo adatbazis!<br/>\n";
+	}
+	$sql = "SELECT tesztkod, kerdesszam FROM kerdesek WHERE tesztkod=".$tesztkod." AND ";
+	
+	if($strict){
+		$sql.="kerdesszam < ".$kerdes;
+	} else {
+		$sql.="kerdesszam <= ".$kerdes;
+	}
+	$sql .= " ORDER BY kerdesszam DESC";
+	// print $sql;
+	$res = mysql_query($sql);
+ 	if (mysql_num_rows($res) == 0) {
+		return $kerdes;
+	}
+	
+	$sor=mysql_fetch_array($res);
+	$kerdesszam = $sor["kerdesszam"];
+	mysql_close($con);
+	return $kerdesszam;
+}
+
+/*
  * Szerkeszt egy tesztet
  */
 function teszt_szerkeszt() {
+	global $host, $user, $pass, $db;
 	$tesztId = $_POST["kivalasztott_teszt"];
 	$tesztKerdes = $_POST["teszt_kerdes"];
 	if(!isset($tesztKerdes)){
-		$tesztKerdes=0;
+		$tesztKerdes=1;
 	}
-	print $tesztId . "kerdes:". $tesztKerdes;
+	$tesztKerdes = kovetkezo_kerdes($tesztId, $tesztKerdes, false);
+	
+	// $van_kovetkezo = kovetkezo_kerdes($tesztId, $tesztKerdes, true)==$tesztKerdes;
+	$van_elozo = elozo_kerdes($tesztId, $tesztKerdes, true)!=$tesztKerdes;
+	
+	$con = mysql_connect($host, $user, $pass);
+	if (!mysql_select_db($db, $con)) {
+		echo "Nemletezo adatbazis!<br/>\n";
+	}
+	$sql = "SELECT * FROM kerdesek WHERE tesztkod=".$tesztId." AND kerdesszam=".$tesztKerdes;
+	$res = mysql_query($sql);
+	$sor=array();
+ 	if (mysql_num_rows($res) != 0) {
+		$sor=mysql_fetch_array($res);
+	}
+	mysql_close($con);
+	
 ?>
-		<form name="tesztszerkeszt" action="index.php" method="post">
-		<h2>Kérdés:</h2>
-		<textarea rows="10" cols="60"></textarea>
-		<h2>Válaszok:</h2>
-		<input type="checkbox" name="helyes1" value=""/>
-		<input type="text" name="kerdes1" value="" size="60"/><br/>
-		<input type="checkbox" name="helyes2" value=""/>
-		<input type="text" name="kerdes2" value="" size="60"/><br/>
-		<input type="checkbox" name="helyes3" value=""/>
-		<input type="text" name="kerdes3" value="" size="60"/><br/>
-		<input type="checkbox" name="helyes4" value=""/>
-		<input type="text" name="kerdes4" value="" size="60"/><br/>
-		
-		<input type="hidden" name="menupont" value="tesztSzerkeszt"/>
-		<input type="hidden" name="tesztKerdes" value=<?php echo "\"".$tesztKerdes."\"" ?>/>
-		<input type="button" value="Következo">
-		</form>
+	<form name="tesztszerkeszt" action="index.php" method="post">
+	<h2>Kérdés:<?php echo $tesztKerdes; ?> </h2>
+	<textarea rows="10" cols="60" name="kerdes"><?php echo $sor["kerdes"]; ?></textarea>
+	<h2>Válaszok:</h2>
+	A. <input type="checkbox" name="helyes_a" <?php echo be_kapcsolva($sor["helyes_a"]); ?>/>
+	<input type="text" name="valasz_a" value=<?php echo "\"".$sor["valasz_a"]."\""; ?> size="60"/><br/>
+	B. <input type="checkbox" name="helyes_b" <?php echo be_kapcsolva($sor["helyes_b"]); ?> />
+	<input type="text" name="valasz_b" value=<?php echo "\"".$sor["valasz_b"]."\""; ?> size="60"/><br/>
+	C. <input type="checkbox" name="helyes_c" <?php echo be_kapcsolva($sor["helyes_c"]); ?>/>
+	<input type="text" name="valasz_c" value=<?php echo "\"".$sor["valasz_c"]."\""; ?> size="60"/><br/>
+	D. <input type="checkbox" name="helyes_d" <?php echo be_kapcsolva($sor["helyes_d"]); ?>/>
+	<input type="text" name="valasz_d" value=<?php echo "\"".$sor["valasz_d"]."\""; ?> size="60"/><br/>
+	
+	<input type="hidden" name="menupont" value="kerdes-muvelet"/>
+	<input type="hidden" name="teszt_kerdes" value=<?php echo "\"".$tesztKerdes."\"" ?>/>
+	<input type="hidden" name="kivalasztott_teszt" value=<?php echo "\"".$tesztId."\"" ?>/>
+	<br />
+	<input type="submit" name="elozo" value="Elozo" <?php if(!$van_elozo) print "\"disabled\"=\"disabled\""; ?>>
+	<input type="submit" name="kovetkezo" value="Következo" >
+	</form>
 <?php
 	
+}
+
+function be_van_kapcsolva($val){
+	if(isset($val)){
+		return "1";
+	} else {
+		return "0";
+	}
+}
+
+function be_kapcsolva($val){
+	if($val==1){
+		return "checked=\"checked\"";
+	} else {
+		return "";
+	}
+}
+
+function teszt_ment() {
+	global $host, $user, $pass, $db;
+	$tesztId = $_POST["kivalasztott_teszt"];
+	$tesztKerdes = $_POST["teszt_kerdes"];
+	$kereso = kovetkezo_kerdes($tesztId, $tesztKerdes-1, true);
+	$sql = "";
+	if($kereso == $tesztKerdes-1){
+		$sql = "INSERT INTO kerdesek (tesztkod,kerdesszam,kerdes,valasz_a,helyes_a,valasz_b,helyes_b,valasz_c,helyes_c,valasz_d,helyes_d) VALUES (";
+		$sql.=$tesztId.",";
+		$sql.=$tesztKerdes.",";
+		$sql.= "'".$_POST["kerdes"]."',";
+		$sql.= "'".$_POST["valasz_a"]."',";
+		$sql.= be_van_kapcsolva($_POST["helyes_a"]).",";
+		$sql.= "'".$_POST["valasz_b"]."',";
+		$sql.= be_van_kapcsolva($_POST["helyes_b"]).",";
+		$sql.= "'".$_POST["valasz_c"]."',";
+		$sql.= be_van_kapcsolva($_POST["helyes_c"]).",";
+		$sql.= "'".$_POST["valasz_d"]."',";
+		$sql.= be_van_kapcsolva($_POST["helyes_d"]);
+		$sql.= ");";
+		
+	} else {
+		$sql = "UPDATE kerdesek SET ";
+		$sql.= "kerdes='".$_POST["kerdes"]."',";
+		$sql.= "valasz_a='".$_POST["valasz_a"]."',";
+		$sql.= "helyes_a=".be_van_kapcsolva($_POST["helyes_a"]).",";
+		$sql.= "valasz_b='".$_POST["valasz_b"]."',";
+		$sql.= "helyes_b=".be_van_kapcsolva($_POST["helyes_b"]).",";
+		$sql.= "valasz_c='".$_POST["valasz_c"]."',";
+		$sql.= "helyes_c=".be_van_kapcsolva($_POST["helyes_c"]).",";
+		$sql.= "valasz_d='".$_POST["valasz_d"]."',";
+		$sql.= "helyes_d=".be_van_kapcsolva($_POST["helyes_d"]);
+		$sql.= " WHERE tesztkod=".$tesztId." AND kerdesszam=".$tesztKerdes.";";
+	}
+	$con = mysql_connect($host, $user, $pass);
+	if (!mysql_select_db($db, $con)) {
+		echo "Nemletezo adatbazis!<br/>\n";
+		return;
+	}
+	$res = mysql_query($sql);
+	mysql_close($con);
+	
+	if(!$res){
+		print "nem sikerult";
+		var_dump($res);
+		return false;
+	}
 }
 ?>

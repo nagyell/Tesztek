@@ -11,6 +11,13 @@ if($_POST["menupont"]=="teszt-muvelet"){
 		$_POST["menupont"]="csoport-megosztas";
 }
 
+if($_POST["menupont"]=="kerdes-muvelet"){
+	if(isset($_POST["kovetkezo"]))
+		$_POST["menupont"]="kerdes-szerkeszt-kovetkezo";
+	if(isset($_POST["elozo"]))
+		$_POST["menupont"]="kerdes-szerkeszt-elozo";
+}
+
 switch ($_POST["menupont"]) {
 	case "be_adatok":
 		if (belep($_POST["nev"], $_POST["jelszo"])) {
@@ -30,6 +37,14 @@ switch ($_POST["menupont"]) {
 	//	print($_POST["kivalasztott_teszt"]);
 	//	print($_POST["kivalasztott_csoport"]);
 	break;
+	case "kerdes-szerkeszt-kovetkezo":
+		teszt_ment();
+		$_POST["teszt_kerdes"] = kovetkezo_kerdes($_POST["kivalasztott_teszt"], $_POST["teszt_kerdes"], true);
+		break;
+	case "kerdes-szerkeszt-elozo":
+		teszt_ment();
+		$_POST["teszt_kerdes"] = elozo_kerdes($_POST["kivalasztott_teszt"], $_POST["teszt_kerdes"], true);
+		break;
 }
 
 ?>
@@ -119,6 +134,10 @@ switch ($_POST["menupont"]) {
 						osszesteszt();
 					break;
 					case "teszt-szerkeszt":
+						teszt_szerkeszt();
+					break;
+					case "kerdes-szerkeszt-kovetkezo":
+					case "kerdes-szerkeszt-elozo":
 						teszt_szerkeszt();
 					break;
 				}
