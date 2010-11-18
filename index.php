@@ -11,6 +11,12 @@ if($_POST["menupont"]=="teszt-muvelet"){
 		$_POST["menupont"]="csoport-megosztas";
 }
 
+if (isset($_POST["lathatosagot-torol"]))
+{
+	echo "Hatha!";
+	lathato_tesztet_torol($_POST["kivalasztott_csoportkod"],$_POST["kivalasztott_teszt"]);
+}
+
 switch ($_POST["menupont"]) {
 	case "be_adatok":
 		if (belep($_POST["nev"], $_POST["jelszo"])) {
@@ -27,8 +33,7 @@ switch ($_POST["menupont"]) {
 	//	print($_POST["kivalasztott_teszt"]);
 	break;
 	case "csoport-megosztas":
-	//	print($_POST["kivalasztott_teszt"]);
-	//	print($_POST["kivalasztott_csoport"]);
+		megoszt($_POST[kivalasztott_csoport],$_POST[kivalasztott_teszt]);
 	break;
 }
 
@@ -70,6 +75,22 @@ switch ($_POST["menupont"]) {
 						<tr><td><a href="javascript: osszesteszt.submit();" class="menu">Minden teszt</a></td></tr>
 						<input type="hidden" name="menupont" value="osszesteszt"/>
 					</form>
+					<form name="megosztasok" action="index.php" method="post">
+						<tr><td><a href="javascript: megosztasok.submit();" class="menu">Megosztott tesztek</a></td></tr>
+						<input type="hidden" name="menupont" value="megosztasok"/>
+					</form>
+			<?php
+				}
+				if ($_SESSION["jogok"]<=1) {
+			?>
+					<form name="csoportok" action="index.php" method="post">
+						<tr><td><a href="javascript: csoportok.submit();" class="menu">Csoportok</a></td></tr>
+						<input type="hidden" name="menupont" value="csoportok"/>
+					</form>
+					<form name="felhasznalok" action="index.php" method="post">
+						<tr><td><a href="javascript: felhasznalok.submit();" class="menu">Felhasznalok</a></td></tr>
+						<input type="hidden" name="menupont" value="felhasznalok"/>
+					</form>
 			<?php
 				}
 			?>
@@ -107,7 +128,7 @@ switch ($_POST["menupont"]) {
 					case "ki_adatok":
 					break;
 					case "tesztek":
-						elerhetotesztek($_SESSION["csoport"]);
+						elerhetotesztek($_SESSION["csoportkod"]);
 					break;
 					case "tesztletrehozas":
 						tesztletrehozas();
@@ -120,6 +141,24 @@ switch ($_POST["menupont"]) {
 					break;
 					case "teszt-szerkeszt":
 						teszt_szerkeszt();
+					break;
+					case "megosztasok":
+						if (isset($_POST["kivalasztott_csoport"]))
+						{
+							megosztasok($_POST["kivalasztott_csoport"]);
+							tesztjei($_POST["kivalasztott_csoport"]);
+						}
+						else
+						{
+							megosztasok(csoportom());
+							tesztjei(csoportom());
+						}
+					break;
+					case "csoportok":
+						csoportok();
+					break;
+					case "felhasznalok":
+						felhasznalok();
 					break;
 				}
 

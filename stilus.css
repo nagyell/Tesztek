@@ -48,7 +48,7 @@ body {
 .menu {
 	display: block;
 	height: 20px;
-	width: 140px;
+	width: 180px;
 	text-align: center;
 	font-weight: bold;
 	color: #444444;
@@ -59,4 +59,28 @@ body {
 .menu:hover {
 	color: #336699;
 	background-color: #cccccc;
+}
+
+.felhasznalok_tablazata {
+	width: 100%;
+	margin-left: 0px;
+	margin-right: 0px;
+	text-align: left;
+	color: inherit;
+	font-size: inherit;
+	font-style: inherit;
+	font-weight: inherit;
+	border: 2px double #409060;
+}
+
+.felhasznalok_tablazata th {
+	text-align: center;
+	font-family: inherit;
+	font-weight: bold;
+	color: #444444;
+	border: 1px solid #40A060;
+}
+ 
+.felhasznalok_tablazata td {
+	border: 1px solid #40A060;
 }
