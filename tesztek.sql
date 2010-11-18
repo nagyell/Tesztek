@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Hoszt: localhost
--- Létrehozás ideje: 2010. nov. 17. 22:29
+-- Létrehozás ideje: 2010. nov. 19. 00:42
 -- Szerver verzió: 5.1.41
 -- PHP verzió: 5.3.1
 
@@ -26,19 +26,21 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 --
 
 CREATE TABLE IF NOT EXISTS `csoportok` (
+  `csoportkod` int(11) NOT NULL AUTO_INCREMENT,
   `csoport` varchar(10) CHARACTER SET utf8 COLLATE utf8_hungarian_ci NOT NULL,
   `leiras` varchar(200) CHARACTER SET utf8 COLLATE utf8_hungarian_ci NOT NULL,
-  PRIMARY KEY (`csoport`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`csoportkod`),
+  UNIQUE KEY `csoport` (`csoport`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
 -- A tábla adatainak kiíratása `csoportok`
 --
 
-INSERT INTO `csoportok` (`csoport`, `leiras`) VALUES
-('adminok', 'Rendszergazdák.'),
-('proba', 'Csak az adatbázis teszteléséhez.'),
-('vendegek', 'Vendégek.');
+INSERT INTO `csoportok` (`csoportkod`, `csoport`, `leiras`) VALUES
+(1, 'adminok', 'Rendszergazdák.'),
+(2, 'proba', 'Csak az adatbázis teszteléséhez.'),
+(3, 'vendegek', 'Vendégek.');
 
 -- --------------------------------------------------------
 
@@ -51,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `felhasznalok` (
   `jelszo` varchar(64) CHARACTER SET utf8 NOT NULL,
   `vnev` varchar(50) CHARACTER SET utf8 COLLATE utf8_hungarian_ci NOT NULL,
   `knev` varchar(50) CHARACTER SET utf8 COLLATE utf8_hungarian_ci NOT NULL,
-  `csoport` varchar(10) CHARACTER SET utf8 COLLATE utf8_hungarian_ci NOT NULL,
+  `csoportkod` int(11) NOT NULL,
   `jogok` int(2) NOT NULL,
   `belepett` int(1) NOT NULL,
   PRIMARY KEY (`nev`)
@@ -61,9 +63,9 @@ CREATE TABLE IF NOT EXISTS `felhasznalok` (
 -- A tábla adatainak kiíratása `felhasznalok`
 --
 
-INSERT INTO `felhasznalok` (`nev`, `jelszo`, `vnev`, `knev`, `csoport`, `jogok`, `belepett`) VALUES
-('', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', 'Rongy', 'Elek', 'proba', 0, 1),
-('admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Rendszer', 'Gazda', 'adminok', 0, 0);
+INSERT INTO `felhasznalok` (`nev`, `jelszo`, `vnev`, `knev`, `csoportkod`, `jogok`, `belepett`) VALUES
+('', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', 'Rongy', 'Elek', 2, 0, 1),
+('admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Rendszer', 'Gazda', 1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -89,6 +91,9 @@ CREATE TABLE IF NOT EXISTS `kerdesek` (
 -- A tábla adatainak kiíratása `kerdesek`
 --
 
+INSERT INTO `kerdesek` (`tesztkod`, `kerdesszam`, `kerdes`, `valasz_a`, `helyes_a`, `valasz_b`, `helyes_b`, `valasz_c`, `helyes_c`, `valasz_d`, `helyes_d`) VALUES
+(1, 1, 'A', 'd', 0, 's', 0, '', 0, '', 0),
+(1, 2, 'Haha!', 'a', 0, 'b', 0, '', 0, '', 0);
 
 -- --------------------------------------------------------
 
@@ -97,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `kerdesek` (
 --
 
 CREATE TABLE IF NOT EXISTS `lathatotesztek` (
-  `csoport` varchar(10) CHARACTER SET utf8 COLLATE utf8_hungarian_ci NOT NULL,
+  `csoportkod` int(11) NOT NULL,
   `tesztkod` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -105,9 +110,11 @@ CREATE TABLE IF NOT EXISTS `lathatotesztek` (
 -- A tábla adatainak kiíratása `lathatotesztek`
 --
 
-INSERT INTO `lathatotesztek` (`csoport`, `tesztkod`) VALUES
-('proba', 1),
-('proba', 2);
+INSERT INTO `lathatotesztek` (`csoportkod`, `tesztkod`) VALUES
+(2, 3),
+(2, 4),
+(3, 8),
+(2, 7);
 
 -- --------------------------------------------------------
 
