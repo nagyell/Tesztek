@@ -45,7 +45,9 @@ switch ($_POST["menupont"]) {
 	break;
 	case "kerdes-szerkeszt-kovetkezo":
 		teszt_ment();
-		$_POST["teszt_kerdes"] = kovetkezo_kerdes($_POST["kivalasztott_teszt"], $_POST["teszt_kerdes"], true);
+		$kov = kovetkezo_kerdes($_POST["kivalasztott_teszt"], $_POST["teszt_kerdes"], true);
+		if($kov==$_POST["teszt_kerdes"]) $kov++;
+		$_POST["teszt_kerdes"] = $kov;
 		break;
 	case "kerdes-szerkeszt-elozo":
 		teszt_ment();
