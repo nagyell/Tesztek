@@ -77,16 +77,25 @@ function elerhetotesztek($csoportkod) {
 	if (!mysql_select_db($db, $con)) {
 		echo "Nemletezo adatbazis!<br/>\n";
 	}
-	$res = mysql_query("select tesztnev from teszt inner join lathatotesztek on teszt.tesztkod = lathatotesztek.tesztkod where lathatotesztek.csoportkod='" . $csoportkod . "';");
+	$res = mysql_query("SELECT teszt.tesztkod,tesztnev FROM teszt INNER JOIN lathatotesztek ON teszt.tesztkod = lathatotesztek.tesztkod WHERE lathatotesztek.csoportkod='" . $csoportkod . "';");
  	if (mysql_num_rows($res) == 0) {
 		mysql_close($con);
 		return false;
 	}
-	print "Az elérhető tesztek:\n";
+	?>
+	<form name="elerheto_tesztek" action="index.php" method="post">
+	<?php
+	$sor=mysql_fetch_array($res);
+	print "<input type=\"radio\" name=\"kivalasztott_teszt\" value=\"".$sor["tesztkod"]."\"/ checked>".$sor["tesztnev"]."<br />\n";
 	while ($sor=mysql_fetch_array($res))
 		{
-			print $sor["tesztnev"]."\n";
+		print "<input type=\"radio\" name=\"kivalasztott_teszt\" value=\"".$sor["tesztkod"]."\"/>".$sor["tesztnev"]."<br />\n";
 		}
+	?>
+	<input type="submit" name="csoport-megosztas" value="Megold">
+	<input type="hidden" name="menupont" value="teszt-megold"/>
+	</form>
+	<?php
 	mysql_close($con);
 	return true;
 }
@@ -97,7 +106,7 @@ function tesztletrehozas() {
 		<table>
 			<tr><td>Az új teszt neve:</td>
 				<td><input name="tesztnev" type="text"></td></tr>
-			<tr><td><input type="submit" value="OK"></td></tr>
+			<tr><td><input type="submit" value="Létrehoz"></td></tr>
 		</table>
 		<input type="hidden" name="menupont" value="tesztnevellenorzes"/>
 <?php
@@ -151,6 +160,7 @@ function osszesteszt() {
 		print "<input type=\"radio\" name=\"kivalasztott_teszt\" value=\"".$sor["tesztkod"]."\"/>".$sor["tesztnev"]."<br />\n";
 		}
 	?>
+	<input type="submit" name="teszt-atnevez" value="Átnevez">
 	<input type="submit" name="teszt-szerkeszt" value="Szerkeszt">
 	<br />
 	<br />
@@ -168,6 +178,47 @@ function osszesteszt() {
 	</form>
 	<?php
 	mysql_close($con);
+}
+
+function teszt_atnevez() {
+	global $host, $user, $pass, $db;
+	$con = mysql_connect($host, $user, $pass);
+	if (!mysql_select_db($db, $con)) {
+		echo "Nemletezo adatbazis!<br/>\n";
+	}
+	$res = mysql_query("SELECT tesztnev FROM teszt WHERE tesztkod=".$_POST["kivalasztott_teszt"].";");
+	if (mysql_num_rows($res) == 0) {
+		mysql_close($con);
+		return false;
+	}
+	$sor = mysql_fetch_array($res);
+	$tesztnev = $sor["tesztnev"];
+	?>
+	<form name="tesztatnevezes" action="index.php" method="post">
+	<table>
+		<tr><td><input name="nev" type="text" value="<?php echo $tesztnev; ?>"></td>
+			<td><input type="submit" value="Átnevez"></td></tr>
+	</table>
+	<input type="hidden" name="menupont" value="teszt-muvelet"/>
+	<input type="hidden" name="kivalasztott_teszt" value="<?php echo $_POST["kivalasztott_teszt"]; ?>"/>
+	</form>
+	<?php
+	mysql_close($con);
+	return true;
+}
+
+function atnevez($tesztkod,$tesztnev) {
+	global $host, $user, $pass, $db;
+	$con = mysql_connect($host, $user, $pass);
+	if (!mysql_select_db($db, $con)) {
+		echo "Nemletezo adatbazis!<br/>\n";
+	}
+	if (!mysql_query("UPDATE teszt SET tesztnev='".$tesztnev."' WHERE tesztkod=".$tesztkod.";")) {
+		mysql_close($con);
+		return false;
+	}
+	mysql_close($con);
+	return true;
 }
 
 function megoszt($csoport,$teszt_kod) {
@@ -470,18 +521,27 @@ function csoportok() {
 	
 
 	print "<table class=\"felhasznalok_tablazata\">";
-	print "<tr><th>Csoportkod</th><th>Csoport</th><th>Leiras</th><th>Muvelet</th></tr>";
+	print "<tr><th>Csoportkód</th><th>Csoport</th><th>Leírás</th><th>Művelet</th></tr>";
 	while ($sor = mysql_fetch_array($res)) {
 		print "<tr><td>".$sor["csoportkod"]."</td><td>".$sor["csoport"]."</td><td>".$sor["leiras"]."</td><td>";
 		?>
 		<form name="form<?php echo $sor["csoport"];?>modosit" action="index.php" method="post">
-		<a href="javascript: form<?php echo $sor["csoport"];?>modosit.submit();" class="menu">Modosit</a>
+		<a href="javascript: form<?php echo $sor["csoport"];?>modosit.submit();" class="menu">Módosít</a>
 		</form>
 		<?php
 		print "</td></tr>";
 	}
 	print "</table>";
-
+	?>
+		<table>
+			<tr><td>
+			<form name="ujcsoport" action="index.php" method="post">
+			<a href="javascript: ujcsoport.submit();" class="menu">Új csoport létrehozása</a>
+			<input type="hidden" name="menupont" value="ujcsoport"/>
+			</form>
+			</td></tr>
+		</table>
+	<?php
 }
 
 function felhasznalok() {
@@ -490,18 +550,26 @@ function felhasznalok() {
 	if (!mysql_select_db($db, $con)) {
 		echo "Nemletezo adatbazis!<br/>\n";
 	}
-	$res = mysql_query("SELECT nev,jelszo,vnev,knev,csoportkod,jogok,belepett FROM felhasznalok;");
+	$res = mysql_query("SELECT nev,jelszo,vnev,knev,csoport,jogok,belepett FROM felhasznalok,csoportok WHERE felhasznalok.csoportkod=csoportok.csoportkod;");
 	if (mysql_num_rows($res) == 0) {
 		mysql_close($con);
 		return false;
 	}
-//	$sor = mysql_fetch_array($res);
-	
+	?>
+	<table>
+		<tr><td>
+		<form name="ujfelhasznalo" action="index.php" method="post">
+		<a href="javascript: ujfelhasznalo.submit();" class="menu">Felhasználó létrehozása</a>
+		<input type="hidden" name="menupont" value="ujfelhasznalo"/>
+		</form>
+		</td></tr>
+	</table>
+	<?php
 
 	print "<table class=\"felhasznalok_tablazata\">";
-	print "<tr><th>Felhasznalonev</th><th>Vezeteknev</th><th>Keresztnev</th><th>Muvelet</th></tr>";
+	print "<tr><th>Felhasználónév</th><th>Vezetéknév</th><th>Keresztnév</th><th>Csoport</th><th>Művelet</th></tr>";
 	while ($sor = mysql_fetch_array($res)) {
-		print "<tr><td>".$sor["nev"]."</td><td>".$sor["vnev"]."</td><td>".$sor["knev"]."</td><td>";
+		print "<tr><td>".$sor["nev"]."</td><td>".$sor["vnev"]."</td><td>".$sor["knev"]."</td><td>".$sor["csoport"]."</td><td>";
 		?>
 		<form name="form<?php echo $sor["nev"];?>modosit" action="index.php" method="post">
 		<a href="javascript: form<?php echo $sor["nev"];?>modosit.submit();" class="menu">Modosit</a>
@@ -513,5 +581,106 @@ function felhasznalok() {
 
 }
 
+
+function ujfelhasznalo() {
+	global $host, $user, $pass, $db;
+	$con = mysql_connect($host, $user, $pass);
+	if (!mysql_select_db($db, $con)) {
+		echo "Nemletezo adatbazis!<br/>\n";
+	}
+	$res = mysql_query("SELECT nev,jelszo,vnev,knev,csoportkod,jogok,belepett FROM felhasznalok;");
+	if (mysql_num_rows($res) == 0) {
+		mysql_close($con);
+		return false;
+	}
+	$csoportok = mysql_query("select csoport, csoportkod from csoportok;");
+ 	if (mysql_num_rows($csoportok) == 0) {
+		mysql_close($con);
+		return false;
+	}
+	?>
+	<form name="ujfelhasznalo" action="index.php" method="post">
+	<table>
+		<tr><td>Felhasználónév:</td>
+			<td><input name="nev" type="text"></td></tr>
+		<tr><td>Jelszó:</td>
+			<td><input name="jelszo" type="password"></td></tr>
+		<tr><td>Vezetéknév:</td>
+			<td><input name="vnev" type="text"></td></tr>
+		<tr><td>Keresztnév:</td>
+			<td><input name="knev" type="text"></td></tr>
+		<tr><td>Csoport:</td>
+			<td><select size="1" name="csoportkod" >
+				<?php 
+					$csoport=mysql_fetch_array($csoportok);
+					print "<option selected value=\"".$csoport["csoportkod"]."\">".$csoport["csoport"]."</option>";
+					while ($csoport=mysql_fetch_array($csoportok))
+					{
+						print "<option value=\"".$csoport["csoportkod"]."\">".$csoport["csoport"]."</option>";
+					}
+				?>
+				</selected></td></tr>
+		<tr><td><input type="submit" value="Létrehoz"></td></tr>
+	</table>
+	<input type="hidden" name="menupont" value="ujfelhasznaloadatok"/>
+	
+	<?php
+}
+
+function letrehozta($nev,$jelszo,$vnev,$knev,$csoportkod) {
+	global $host, $user, $pass, $db;
+	$con = mysql_connect($host, $user, $pass);
+	if (!mysql_select_db($db, $con)) {
+		echo "Nemletezo adatbazis!<br/>\n";
+	}
+	$res = mysql_query("SELECT * FROM felhasznalok WHERE nev='".$nev."';");
+	if (mysql_num_rows($res) != 0) {
+		mysql_close($con);
+		return false;
+	}
+	if (mysql_query("INSERT INTO felhasznalok (nev, jelszo, vnev, knev, csoportkod) VALUES (\"$nev\", \"".sha1($jelszo)."\", \"$vnev\", \"$knev\", $csoportkod);")) {
+		mysql_close($con);
+		return true;
+	}
+	else {
+		mysql_close($con);
+		return false;
+	}
+}
+
+function ujcsoport() {
+	?>
+	<form name="ujcsoport" action="index.php" method="post">
+	<table>
+		<tr><td>Csoport neve:</td>
+			<td><input name="csoport" type="text"></td></tr>
+		<tr><td>Leírás a csoportról:</td>
+			<td><input name="leiras" type="text"></td></tr>
+		<tr><td><input type="submit" value="Létrehoz"></td></tr>
+	</table>
+	<input type="hidden" name="menupont" value="ujcsoportadatai"/>
+	<?php
+}
+
+function letrehozta_a_csoportot($csoport,$leiras) {
+	global $host, $user, $pass, $db;
+	$con = mysql_connect($host, $user, $pass);
+	if (!mysql_select_db($db, $con)) {
+		echo "Nemletezo adatbazis!<br/>\n";
+	}
+	$res = mysql_query("SELECT * FROM csoportok WHERE csoport='".$csoport."';");
+	if (mysql_num_rows($res) != 0) {
+		mysql_close($con);
+		return false;
+	}
+	if (mysql_query("INSERT INTO csoportok (csoport, leiras) VALUES ('".$csoport."','".$leiras."');")) {
+		mysql_close($con);
+		return true;
+	}
+	else {
+		mysql_close($con);
+		return false;
+	}
+}
 
 ?>

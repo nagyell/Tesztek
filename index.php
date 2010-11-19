@@ -8,6 +8,17 @@ include "fuggvenyek.php";
 if($_POST["menupont"]=="teszt-muvelet"){
 	if(isset($_POST["teszt-szerkeszt"]))
 		$_POST["menupont"]="teszt-szerkeszt";
+	if(isset($_POST["teszt-atnevez"]))
+		$_POST["menupont"]="teszt-atnevez";
+	if(isset($_POST["nev"])) {
+		if ($_POST["nev"]=="") {
+			$_POST["menupont"]="teszt-atnevez";
+		}
+		else {
+			atnevez($_POST["kivalasztott_teszt"],$_POST["nev"]);
+			$_POST["menupont"]="osszesteszt";
+		}
+	}
 	if(isset($_POST["csoport-megosztas"]))
 		$_POST["menupont"]="csoport-megosztas";
 }
@@ -20,9 +31,26 @@ if($_POST["menupont"]=="kerdes-muvelet"){
 
 }
 
+if($_POST["menupont"]=="ujfelhasznaloadatok"){
+	if (letrehozta($_POST["nev"],$_POST["jelszo"],$_POST["vnev"],$_POST["knev"],$_POST["csoportkod"])) {
+		$_POST["menupont"]="felhasznalok";
+	}
+	else {
+		$_POST["menupont"]="ujfelhasznalo";
+	}
+}
+
+if($_POST["menupont"]=="ujcsoportadatai"){
+	if (letrehozta_a_csoportot($_POST["csoport"],$_POST["leiras"])) {
+		$_POST["menupont"]="csoportok";
+	}
+	else {
+		$_POST["menupont"]="ujcsoport";
+	}
+}
+
 if (isset($_POST["lathatosagot-torol"]))
 {
-	echo "Hatha!";
 	lathato_tesztet_torol($_POST["kivalasztott_csoportkod"],$_POST["kivalasztott_teszt"]);
 }
 
@@ -67,8 +95,16 @@ switch ($_POST["menupont"]) {
 <body>
 
 <div id="fejlec">
-	<div id="cim">Oldjunk teszteket <?php if (isset($_SESSION["nev"])) { echo $_SESSION["vnev"], " ", $_SESSION["knev"]; } ?>!
-	</div>
+	<?php
+		if (isset($_SESSION["nev"])) {
+			if ($_SESSION["jogok"]<=1) echo "<div id=\"cim\">Szép napot ".$_SESSION["vnev"]." ".$_SESSION["knev"]."!</div>";
+			if ($_SESSION["jogok"]==2) echo "<div id=\"cim\">Szerkesszünk teszteket ".$_SESSION["vnev"]." ".$_SESSION["knev"]."!</div>";
+			if ($_SESSION["jogok"]>=3) echo "<div id=\"cim\">Oldjunk teszteket ".$_SESSION["vnev"]." ".$_SESSION["knev"]."!</div>";
+		}
+		else {
+			echo "<div id=\"cim\">Oldjunk teszteket!</div>";
+		}
+	?>
 </div>
 
 
@@ -107,14 +143,14 @@ switch ($_POST["menupont"]) {
 						<input type="hidden" name="menupont" value="csoportok"/>
 					</form>
 					<form name="felhasznalok" action="index.php" method="post">
-						<tr><td><a href="javascript: felhasznalok.submit();" class="menu">Felhasznalok</a></td></tr>
+						<tr><td><a href="javascript: felhasznalok.submit();" class="menu">Felhasználók</a></td></tr>
 						<input type="hidden" name="menupont" value="felhasznalok"/>
 					</form>
 			<?php
 				}
 			?>
 				<form name="ki" action="index.php" method="post">
-					<tr><td><a href="javascript: ki.submit();" class="menu">Kilepes</a></td></tr>
+					<tr><td><a href="javascript: ki.submit();" class="menu">Kilépés</a></td></tr>
 					<input type="hidden" name="menupont" value="ki"/>
 				</form>
 		<?php
@@ -159,11 +195,12 @@ switch ($_POST["menupont"]) {
 						osszesteszt();
 					break;
 					case "teszt-szerkeszt":
-						teszt_szerkeszt();
-					break;
 					case "kerdes-szerkeszt-kovetkezo":
 					case "kerdes-szerkeszt-elozo":
 						teszt_szerkeszt();
+					break;
+					case "teszt-atnevez":
+						teszt_atnevez();
 					break;
 					case "megosztasok":
 						if (isset($_POST["kivalasztott_csoport"]))
@@ -182,6 +219,12 @@ switch ($_POST["menupont"]) {
 					break;
 					case "felhasznalok":
 						felhasznalok();
+					break;
+					case "ujfelhasznalo":
+						ujfelhasznalo();
+					break;
+					case "ujcsoport":
+						ujcsoport();
 					break;
 				}
 
