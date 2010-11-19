@@ -872,18 +872,26 @@ function teszt_eredmeny(){
 	
 	$tesztId = $_POST["kivalasztott_teszt"];
 	$tesztKerdes = $_POST["teszt_kerdes"];
-	
+
+	$sql = "SELECT count(*) AS db FROM megoldasok WHERE tesztkod=".$tesztId." AND nev='".$_SESSION["nev"]."';";
+	$res = mysql_query($sql);
+	$sor = mysql_fetch_array($res);
+	$osszdb = $sor[db];
+	print "<h2>".$osszdb." válaszból ";
 	$sql = "SELECT helyes,count(*) AS db FROM megoldasok WHERE tesztkod=".$tesztId." AND nev='".$_SESSION["nev"]."' GROUP BY helyes";
 	$res = mysql_query($sql);
-	print "<h2>Eredmény:</h2>";
-	print "<h3>";
+//	print "<h2>Eredmény:</h2>";
+//	print "<h3>";
 	while ($sor=mysql_fetch_array($res)){
-		if($sor["helyes"]==0) print "Helytelen:";
-		else print "Helyes:";
-		print $sor["db"];
-		print "<br>";
+		if($sor["helyes"]==0) {
+//			print "Helytelen:";
+//		print $sor["db"]." volt helytelen és ";
+		}
+		else {
+//			print "Helyes:";
+		print $sor["db"]." volt helyes.</h2>";
+		}
 	}
-	print "</h3>";
 	mysql_close($con);
 }
 
