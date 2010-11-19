@@ -115,6 +115,9 @@ switch ($_POST["menupont"]) {
 		valaszt_ment();
 		$_POST["teszt_kerdes"] = elozo_kerdes($_POST["kivalasztott_teszt"], $_POST["teszt_kerdes"], true);
 		break;
+	case "teszt-megold-vege":
+		valaszt_ment();
+		break;
 }
 
 ?>
@@ -241,7 +244,7 @@ switch ($_POST["menupont"]) {
 						osszesteszt();
 					break;
 					case "teszt-megold-vege":
-						print "<h2>Eredmény</h2>";
+						teszt_eredmeny();
 					break;
 					case "teszt-megold":
 					case "teszt-megold-kovetkezo":

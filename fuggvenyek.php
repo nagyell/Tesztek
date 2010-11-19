@@ -786,54 +786,105 @@ function teszt_megjelenites(){
 <?php
 }
 
+function van_valasz(){
+	$sql = "SELECT * FROM megoldasok WHERE ";
+	$sql .= "nev='".$_SESSION['nev']."' AND ";
+	$sql .= "tesztkod=".$_POST["kivalasztott_teszt"]." AND ";
+	$sql .= "kerdesszam=".$_POST["teszt_kerdes"]." ";
+	
+	$res = mysql_query($sql);
+ 	return mysql_num_rows($res)!= 0;
+}
+function helyese( $tesztId, $tesztKerdes){
+	$sql = "SELECT helyes_a,helyes_b,helyes_c,helyes_d FROM kerdesek WHERE tesztkod=".$tesztId." AND kerdesszam=".$tesztKerdes;
+	$res = mysql_query($sql);
+ 	if (mysql_num_rows($res) != 0) {
+		$sor=mysql_fetch_array($res);
+		if(
+		$sor["helyes_a"]==be_van_kapcsolva($_POST["helyes_a"]) &&
+		$sor["helyes_b"]==be_van_kapcsolva($_POST["helyes_b"]) &&
+		$sor["helyes_c"]==be_van_kapcsolva($_POST["helyes_c"]) &&
+		$sor["helyes_d"]==be_van_kapcsolva($_POST["helyes_d"])
+		){
+			return 1;
+		} else {
+			return 0;
+		}
+	} else {
+		return 0;
+	}
+
+}
+
 function valaszt_ment() {
 	global $host, $user, $pass, $db;
 	$tesztId = $_POST["kivalasztott_teszt"];
 	$tesztKerdes = $_POST["teszt_kerdes"];
-	$kereso = kovetkezo_kerdes($tesztId, $tesztKerdes-1, true);
+	
+	$con = mysql_connect($host, $user, $pass);
+	if (!mysql_select_db($db, $con)) {
+		echo "Nemletezo adatbazis!<br/>\n";
+		return;
+	}
+	
+	$helyes = helyese($tesztId,$tesztKerdes);
+	
 	$sql = "";
-	if($kereso == $tesztKerdes-1){
-		$sql = "INSERT INTO kerdesek (tesztkod,kerdesszam,kerdes,valasz_a,helyes_a,valasz_b,helyes_b,valasz_c,helyes_c,valasz_d,helyes_d) VALUES (";
-		$sql.=$tesztId.",";
-		$sql.=$tesztKerdes.",";
-		$sql.= "'".$_POST["kerdes"]."',";
-		$sql.= "'".$_POST["valasz_a"]."',";
-		$sql.= be_van_kapcsolva($_POST["helyes_a"]).",";
-		$sql.= "'".$_POST["valasz_b"]."',";
-		$sql.= be_van_kapcsolva($_POST["helyes_b"]).",";
-		$sql.= "'".$_POST["valasz_c"]."',";
-		$sql.= be_van_kapcsolva($_POST["helyes_c"]).",";
-		$sql.= "'".$_POST["valasz_d"]."',";
-		$sql.= be_van_kapcsolva($_POST["helyes_d"]);
+	if(!van_valasz()){
+		$sql = "INSERT INTO megoldasok (nev,tesztkod,kerdesszam,valasztott_a,valasztott_b,valasztott_c,valasztott_d,helyes) VALUES (";
+		$sql.= "'".$_SESSION["nev"]."', ";
+		$sql.=$tesztId.", ";
+		$sql.=$tesztKerdes.", ";
+		$sql.= be_van_kapcsolva($_POST["helyes_a"]).", ";
+		$sql.= be_van_kapcsolva($_POST["helyes_b"]).", ";
+		$sql.= be_van_kapcsolva($_POST["helyes_c"]).", ";
+		$sql.= be_van_kapcsolva($_POST["helyes_d"]).", ";
+		$sql.= $helyes;
 		$sql.= ");";
 		
 	} else {
-		$sql = "UPDATE kerdesek SET ";
-		$sql.= "kerdes='".$_POST["kerdes"]."',";
-		$sql.= "valasz_a='".$_POST["valasz_a"]."',";
-		$sql.= "helyes_a=".be_van_kapcsolva($_POST["helyes_a"]).",";
-		$sql.= "valasz_b='".$_POST["valasz_b"]."',";
-		$sql.= "helyes_b=".be_van_kapcsolva($_POST["helyes_b"]).",";
-		$sql.= "valasz_c='".$_POST["valasz_c"]."',";
-		$sql.= "helyes_c=".be_van_kapcsolva($_POST["helyes_c"]).",";
-		$sql.= "valasz_d='".$_POST["valasz_d"]."',";
-		$sql.= "helyes_d=".be_van_kapcsolva($_POST["helyes_d"]);
-		$sql.= " WHERE tesztkod=".$tesztId." AND kerdesszam=".$tesztKerdes.";";
+		$sql = "UPDATE megoldasok SET ";
+		$sql.= "valasztott_a=".be_van_kapcsolva($_POST["helyes_a"]).",";
+		$sql.= "valasztott_b=".be_van_kapcsolva($_POST["helyes_b"]).",";
+		$sql.= "valasztott_c=".be_van_kapcsolva($_POST["helyes_c"]).",";
+		$sql.= "valasztott_d=".be_van_kapcsolva($_POST["helyes_d"]).",";
+		$sql.= "helyes=".$helyes;
+		$sql.= " WHERE tesztkod=".$tesztId." AND kerdesszam=".$tesztKerdes." AND nev='".$_SESSION["nev"]."'";
 	}
-	print $sql."<br>";
-//	$con = mysql_connect($host, $user, $pass);
-//	if (!mysql_select_db($db, $con)) {
-//		echo "Nemletezo adatbazis!<br/>\n";
-//		return;
-//	}
-//	$res = mysql_query($sql);
-//	mysql_close($con);
 	
-//	if(!$res){
-//		print "nem sikerult";
-//		var_dump($res);
-//		return false;
-//	}
+	$res = mysql_query($sql);
+	mysql_close($con);
+
+	if(!$res){
+		print "nem sikerult";
+		var_dump($res);
+		return false;
+	}
+}
+
+function teszt_eredmeny(){
+	global $host, $user, $pass, $db;
+	$con = mysql_connect($host, $user, $pass);
+	if (!mysql_select_db($db, $con)) {
+		echo "Nemletezo adatbazis!<br/>\n";
+		return;
+	}
+	
+	$tesztId = $_POST["kivalasztott_teszt"];
+	$tesztKerdes = $_POST["teszt_kerdes"];
+	
+	$sql = "SELECT helyes,count(*) AS db FROM megoldasok WHERE tesztkod=".$tesztId." AND nev='".$_SESSION["nev"]."' GROUP BY helyes";
+	$res = mysql_query($sql);
+	print "<h2>Eredmény:</h2>";
+	print "<h3>";
+	while ($sor=mysql_fetch_array($res)){
+		if($sor["helyes"]==0) print "Helytelen:";
+		else print "Helyes:";
+		print $sor["db"];
+		print "<br>";
+	}
+	print "</h3>";
+	mysql_close($con);
 }
 
 ?>
