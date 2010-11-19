@@ -517,9 +517,6 @@ function csoportok() {
 		mysql_close($con);
 		return false;
 	}
-//	$sor = mysql_fetch_array($res);
-	
-
 	print "<table class=\"felhasznalok_tablazata\">";
 	print "<tr><th>Csoportkód</th><th>Csoport</th><th>Leírás</th><th>Művelet</th></tr>";
 	while ($sor = mysql_fetch_array($res)) {
@@ -527,6 +524,8 @@ function csoportok() {
 		?>
 		<form name="form<?php echo $sor["csoport"];?>modosit" action="index.php" method="post">
 		<a href="javascript: form<?php echo $sor["csoport"];?>modosit.submit();" class="menu">Módosít</a>
+		<input type="hidden" name="csoportkod" value="<?php echo $sor["csoportkod"];?>">
+		<input type="hidden" name="menupont" value="csoportot-modosit">
 		</form>
 		<?php
 		print "</td></tr>";
@@ -542,6 +541,51 @@ function csoportok() {
 			</td></tr>
 		</table>
 	<?php
+}
+
+function csoportot_modosit() {
+	global $host, $user, $pass, $db;
+	$con = mysql_connect($host, $user, $pass);
+	if (!mysql_select_db($db, $con)) {
+		echo "Nemletezo adatbazis!<br/>\n";
+	}
+	$csoportkod = $_POST["csoportkod"];
+	$res = mysql_query("SELECT csoport,leiras FROM csoportok WHERE csoportkod=".$csoportkod.";");
+	if (mysql_num_rows($res) == 0) {
+		mysql_close($con);
+		return false;
+	}
+	$sor = mysql_fetch_array($res);
+	$csoport = $sor["csoport"];
+	$leiras = $sor["leiras"];
+	?>
+	<form name="csoportatnevezes" action="index.php" method="post">
+	<table>
+		<tr><td>Csoport</td><td><input name="csoport" type="text" value="<?php echo $csoport; ?>"></td></tr>
+			<td>Leírás</td><td><input name="leiras" type="text" value="<?php echo $leiras; ?>"></td></tr>
+			<td><input type="submit" value="Modosít"></td></tr>
+	</table>
+	<input type="hidden" name="menupont" value="csoportot-modosit"/>
+	<input type="hidden" name="csoportkod" value="<?php echo $csoportkod; ?>"/>
+	</form>
+	<?php
+
+	mysql_close($con);
+	return true;
+}
+
+function modositsd_a_csoportot($csoportkod, $csoport,$leiras) {
+	global $host, $user, $pass, $db;
+	$con = mysql_connect($host, $user, $pass);
+	if (!mysql_select_db($db, $con)) {
+		echo "Nemletezo adatbazis!<br/>\n";
+	}
+	if (!mysql_query("UPDATE csoportok SET csoport='".$csoport."',leiras='".$leiras."' WHERE csoportkod=".$csoportkod.";")) {
+		mysql_close($con);
+		return false;
+	}
+	mysql_close($con);
+	return true;
 }
 
 function felhasznalok() {

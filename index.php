@@ -40,6 +40,20 @@ if($_POST["menupont"]=="teszt-megold"){
 		$_POST["menupont"]="teszt-megold-vege";
 }
 
+if($_POST["menupont"]=="csoportot-modosit"){
+	if(isset($_POST["csoport"])) {
+		if ($_POST["csoport"]=="") {
+			$_POST["menupont"]="csoportot-modosit";
+		}
+		else {
+			modositsd_a_csoportot($_POST["csoportkod"],$_POST["csoport"],$_POST["leiras"]);
+			$_POST["menupont"]="csoportok";
+		}
+	}
+	if(isset($_POST["csoport-megosztas"]))
+		$_POST["menupont"]="csoport-megosztas";
+}
+
 if($_POST["menupont"]=="ujfelhasznaloadatok"){
 	if (letrehozta($_POST["nev"],$_POST["jelszo"],$_POST["vnev"],$_POST["knev"],$_POST["csoportkod"])) {
 		$_POST["menupont"]="felhasznalok";
@@ -242,6 +256,9 @@ switch ($_POST["menupont"]) {
 					break;
 					case "csoportok":
 						csoportok();
+					break;
+					case "csoportot-modosit":
+						csoportot_modosit();
 					break;
 					case "felhasznalok":
 						felhasznalok();
