@@ -114,6 +114,9 @@ switch ($_POST["menupont"]) {
 		valaszt_ment();
 		$_POST["teszt_kerdes"] = elozo_kerdes($_POST["kivalasztott_teszt"], $_POST["teszt_kerdes"], true);
 		break;
+	case "teszt-megold-vege":
+		valaszt_ment();
+		break;
 }
 
 ?>
