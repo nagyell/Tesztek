@@ -31,6 +31,15 @@ if($_POST["menupont"]=="kerdes-muvelet"){
 
 }
 
+if($_POST["menupont"]=="teszt-megold"){
+	if(isset($_POST["kovetkezo"]))
+		$_POST["menupont"]="teszt-megold-kovetkezo";
+	if(isset($_POST["elozo"]))
+		$_POST["menupont"]="teszt-megold-elozo";
+	if(isset($_POST["vege"]))
+		$_POST["menupont"]="teszt-megold-vege";
+}
+
 if($_POST["menupont"]=="ujfelhasznaloadatok"){
 	if (letrehozta($_POST["nev"],$_POST["jelszo"],$_POST["vnev"],$_POST["knev"],$_POST["csoportkod"])) {
 		$_POST["menupont"]="felhasznalok";
@@ -80,6 +89,15 @@ switch ($_POST["menupont"]) {
 		break;
 	case "kerdes-szerkeszt-elozo":
 		teszt_ment();
+		$_POST["teszt_kerdes"] = elozo_kerdes($_POST["kivalasztott_teszt"], $_POST["teszt_kerdes"], true);
+		break;
+	case "teszt-megold-kovetkezo":
+		valaszt_ment();
+		$kov = kovetkezo_kerdes($_POST["kivalasztott_teszt"], $_POST["teszt_kerdes"], true);
+		$_POST["teszt_kerdes"] = $kov;
+		break;
+	case "teszt-megold-elozo":
+		valaszt_ment();
 		$_POST["teszt_kerdes"] = elozo_kerdes($_POST["kivalasztott_teszt"], $_POST["teszt_kerdes"], true);
 		break;
 }
@@ -193,6 +211,14 @@ switch ($_POST["menupont"]) {
 					break;
 					case "osszesteszt":
 						osszesteszt();
+					break;
+					case "teszt-megold-vege":
+						print "<h2>Eredmény</h2>";
+					break;
+					case "teszt-megold":
+					case "teszt-megold-kovetkezo":
+					case "teszt-megold-elozo":
+						teszt_megjelenites();
 					break;
 					case "teszt-szerkeszt":
 					case "kerdes-szerkeszt-kovetkezo":

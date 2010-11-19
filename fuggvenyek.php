@@ -659,6 +659,7 @@ function ujcsoport() {
 		<tr><td><input type="submit" value="Létrehoz"></td></tr>
 	</table>
 	<input type="hidden" name="menupont" value="ujcsoportadatai"/>
+	</form>
 	<?php
 }
 
@@ -681,6 +682,114 @@ function letrehozta_a_csoportot($csoport,$leiras) {
 		mysql_close($con);
 		return false;
 	}
+}
+
+function teszt_megjelenites(){
+	global $host, $user, $pass, $db;
+	$tesztId = $_POST["kivalasztott_teszt"];
+	$tesztKerdes = $_POST["teszt_kerdes"];
+	if(!isset($tesztKerdes)){
+		$tesztKerdes=-1;
+	}
+	$tesztKerdes = kovetkezo_kerdes($tesztId, $tesztKerdes, false);
+	
+	if($tesztKerdes==-1){
+		print("Ez a teszt nem tartalmaz kérdést.<br>");
+		return;
+	}
+	
+	$van_kovetkezo = kovetkezo_kerdes($tesztId, $tesztKerdes, true)!=$tesztKerdes;
+	$van_elozo = elozo_kerdes($tesztId, $tesztKerdes, true)!=$tesztKerdes;
+	
+	$con = mysql_connect($host, $user, $pass);
+	if (!mysql_select_db($db, $con)) {
+		echo "Nemletezo adatbazis!<br/>\n";
+	}
+	$sql = "SELECT * FROM kerdesek WHERE tesztkod=".$tesztId." AND kerdesszam=".$tesztKerdes;
+	$res = mysql_query($sql);
+	$sor=array();
+ 	if (mysql_num_rows($res) != 0) {
+		$sor=mysql_fetch_array($res);
+	}
+	mysql_close($con);
+	
+?>
+	<form name="tesztszerkeszt" action="index.php" method="post">
+	<h2>Kérdés:<?php echo $tesztKerdes; ?> </h2>
+	<?php echo $sor["kerdes"]; ?>
+	<h2>Válaszok:</h2>
+	A. <input type="checkbox" name="helyes_a"/>
+	<?php echo $sor["valasz_a"]; ?> <br/>
+	B. <input type="checkbox" name="helyes_b"/>
+	<?php echo $sor["valasz_b"]; ?> <br/>
+	C. <input type="checkbox" name="helyes_c"/>
+	<?php echo $sor["valasz_c"]; ?> <br/>
+	D. <input type="checkbox" name="helyes_d"/>
+	<?php echo $sor["valasz_d"]; ?> <br/>
+	
+	<input type="hidden" name="menupont" value="teszt-megold"/>
+	<input type="hidden" name="teszt_kerdes" value=<?php echo "\"".$tesztKerdes."\"" ?>/>
+	<input type="hidden" name="kivalasztott_teszt" value=<?php echo "\"".$tesztId."\"" ?>/>
+	<br />
+	<input type="submit" name="elozo" value="Előző" <?php if(!$van_elozo) print "\"disabled\"=\"disabled\""; ?>>
+	<?php if($van_kovetkezo==true) {	?>
+		<input type="submit" name="kovetkezo" value="Következő" >
+	<?php } else {	?>
+		<input type="submit" name="vege" value="Vége" >
+	<?php } ?>
+	
+	</form>
+<?php
+}
+
+function valaszt_ment() {
+	global $host, $user, $pass, $db;
+	$tesztId = $_POST["kivalasztott_teszt"];
+	$tesztKerdes = $_POST["teszt_kerdes"];
+	$kereso = kovetkezo_kerdes($tesztId, $tesztKerdes-1, true);
+	$sql = "";
+	if($kereso == $tesztKerdes-1){
+		$sql = "INSERT INTO kerdesek (tesztkod,kerdesszam,kerdes,valasz_a,helyes_a,valasz_b,helyes_b,valasz_c,helyes_c,valasz_d,helyes_d) VALUES (";
+		$sql.=$tesztId.",";
+		$sql.=$tesztKerdes.",";
+		$sql.= "'".$_POST["kerdes"]."',";
+		$sql.= "'".$_POST["valasz_a"]."',";
+		$sql.= be_van_kapcsolva($_POST["helyes_a"]).",";
+		$sql.= "'".$_POST["valasz_b"]."',";
+		$sql.= be_van_kapcsolva($_POST["helyes_b"]).",";
+		$sql.= "'".$_POST["valasz_c"]."',";
+		$sql.= be_van_kapcsolva($_POST["helyes_c"]).",";
+		$sql.= "'".$_POST["valasz_d"]."',";
+		$sql.= be_van_kapcsolva($_POST["helyes_d"]);
+		$sql.= ");";
+		
+	} else {
+		$sql = "UPDATE kerdesek SET ";
+		$sql.= "kerdes='".$_POST["kerdes"]."',";
+		$sql.= "valasz_a='".$_POST["valasz_a"]."',";
+		$sql.= "helyes_a=".be_van_kapcsolva($_POST["helyes_a"]).",";
+		$sql.= "valasz_b='".$_POST["valasz_b"]."',";
+		$sql.= "helyes_b=".be_van_kapcsolva($_POST["helyes_b"]).",";
+		$sql.= "valasz_c='".$_POST["valasz_c"]."',";
+		$sql.= "helyes_c=".be_van_kapcsolva($_POST["helyes_c"]).",";
+		$sql.= "valasz_d='".$_POST["valasz_d"]."',";
+		$sql.= "helyes_d=".be_van_kapcsolva($_POST["helyes_d"]);
+		$sql.= " WHERE tesztkod=".$tesztId." AND kerdesszam=".$tesztKerdes.";";
+	}
+	print $sql."<br>";
+//	$con = mysql_connect($host, $user, $pass);
+//	if (!mysql_select_db($db, $con)) {
+//		echo "Nemletezo adatbazis!<br/>\n";
+//		return;
+//	}
+//	$res = mysql_query($sql);
+//	mysql_close($con);
+	
+//	if(!$res){
+//		print "nem sikerult";
+//		var_dump($res);
+//		return false;
+//	}
 }
 
 ?>
