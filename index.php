@@ -81,6 +81,7 @@ switch ($_POST["menupont"]) {
 	case "be_adatok":
 		if (belep($_POST["nev"], $_POST["jelszo"])) {
 			//echo "Sikeres belepes!";
+			$_POST["menupont"]="tesztek";
 		}	
 		else {
 			//echo "Nem sikerult belepni!";
@@ -151,6 +152,10 @@ switch ($_POST["menupont"]) {
 					<tr><td><a href="javascript: tesztek.submit();" class="menu">Tesztek</a></td></tr>
 					<input type="hidden" name="menupont" value="tesztek"/>
 				</form>
+				<form name="eredmenyek" action="index.php" method="post">
+					<tr><td><a href="javascript: eredmenyek.submit();" class="menu">Eredmények</a></td></tr>
+					<input type="hidden" name="menupont" value="eredmenyek"/>
+				</form>
 			<?php	
 				if ($_SESSION["jogok"]<=2) {
 			?>
@@ -208,6 +213,15 @@ switch ($_POST["menupont"]) {
 					<form name="kilap" action="index.php" method="post">
 					<table>
 						<tr><td>Viszlat!!!!</td>
+					</table>
+					<input type="hidden" name="menupont" value="ki_adatok"/>
+					<?php
+					break;
+					case "eredmenyek":
+					?>
+					<form name="kilap" action="index.php" method="post">
+					<table>
+						<tr><td>A tanárúr / tanárnő még nem javította ki. Probáld meg később!</td>
 					</table>
 					<input type="hidden" name="menupont" value="ki_adatok"/>
 					<?php
@@ -272,7 +286,7 @@ switch ($_POST["menupont"]) {
 				}
 
 			?>
-			Szia!
+<!--			Szia!				-->
 		<?php
 			}
 			else {
@@ -294,7 +308,7 @@ switch ($_POST["menupont"]) {
 						echo "Nem sikerult belepni!";
 					break;
 					case "ki":
-						echo "Viszlat!";
+//						echo "Viszlat!";
 /*					?>
 					<form name="kilap" action="index.php" method="post">
 					<table>
@@ -309,7 +323,7 @@ switch ($_POST["menupont"]) {
 				}
 
 		?>
-			Nem szia!
+<!--			Nem szia!			-->
 		<?php
 			}
 		?>
