@@ -230,7 +230,7 @@ switch ($_POST["menupont"]) {
 						osszesteszt();
 					break;
 					case "teszt-megold-vege":
-						print "<h2>Eredmény</h2>";
+						teszt_eredmeny();
 					break;
 					case "teszt-megold":
 					case "teszt-megold-kovetkezo":
